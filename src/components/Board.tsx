@@ -9,17 +9,14 @@ import {
   AlertDialogTitle
 } from './ui/alert-dialog'
 import { Button } from './ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from './ui/dialog'
 
 //  directions (up, down, left, right)
-const DIRECTIONS = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+const DIRECTIONS = [
+  [-1, 0],
+  [1, 0],
+  [0, -1],
+  [0, 1]
+]
 
 const NUM_ROWS = 10
 const NUM_COLS = 20
@@ -44,35 +41,29 @@ function Board () {
   // const [removedPerimeter, setRemovedPerimeter] = useState<CoordinatesType[]>([])
   const [gameOver, setGameOver] = useState(false)
   const [gameWon, setGameWon] = useState(false)
-  const [numberOfColors, setNumberOfColors] = useState(5)
+  const [numberOfColors, setNumberOfColors] = useState(3)
   // const [matchingPieces, setMatchingPieces] = useState(new Set())
   // const cssStyle = ${matchingPieces.has(`${rowIndex}-${cellIndex}`) ? 'opacity-0': ''}
   // const [matrix, setMatrix] = useState<number[][] | string[][]>(
   const [matrix, setMatrix] = useState<BoardType>(
-    Array.from(
-      { length: NUM_ROWS },
-      () =>
-        Array.from(
-          { length: NUM_COLS },
-          () => Math.floor(Math.random() * numberOfColors)
-        )
+    Array.from({ length: NUM_ROWS }, () =>
+      Array.from({ length: NUM_COLS }, () =>
+        Math.floor(Math.random() * numberOfColors)
+      )
     )
   )
 
   const handleNextLevel = () => {
-    setNumberOfColors(prev => prev++)
+    setNumberOfColors((prev) => prev++)
     handleRestartGame()
   }
 
   const handleRestartGame = () => {
     setMatrix(
-      Array.from(
-        { length: NUM_ROWS },
-        () =>
-          Array.from(
-            { length: NUM_COLS },
-            () => Math.floor(Math.random() * numberOfColors)
-          )
+      Array.from({ length: NUM_ROWS }, () =>
+        Array.from({ length: NUM_COLS }, () =>
+          Math.floor(Math.random() * numberOfColors)
+        )
       )
     )
     setGameOver(false)
@@ -112,8 +103,11 @@ function Board () {
 
           // check if the neighboring position is within bounds
           if (
-            newRow >= 0 && newRow < NUM_ROWS && newCol >= 0 &&
-            newCol < NUM_COLS && matrix[newRow][newCol] === currentValue
+            newRow >= 0 &&
+            newRow < NUM_ROWS &&
+            newCol >= 0 &&
+            newCol < NUM_COLS &&
+            matrix[newRow][newCol] === currentValue
           ) {
             return true // Found an adjacent match
           }
@@ -134,16 +128,15 @@ function Board () {
     const visited = new Set<string>()
 
     // recursively explore and mark connected pieces
-    const explore = (
-      { row, col }: {
-        row: number
-        col: number
-      }
-    ) => {
+    const explore = ({ row, col }: { row: number, col: number }) => {
       // check if the current position is out of bounds or dont match the piece value
       if (
-        row < 0 || row >= 10 || col < 0 || col >= NUM_COLS ||
-        matrix[row][col] !== pieceValue || visited.has(`${row}-${col}`)
+        row < 0 ||
+        row >= 10 ||
+        col < 0 ||
+        col >= NUM_COLS ||
+        matrix[row][col] !== pieceValue ||
+        visited.has(`${row}-${col}`)
       ) {
         return
       }
@@ -239,12 +232,11 @@ function Board () {
 
   return (
     <>
-      <section className='flex flex-col gap-1 rounded-md overflow-hidden'>
+      <section className="flex flex-col gap-1 rounded-md overflow-hidden">
         {matrix.map((row: any, rowIndex: any) => (
           <div
             key={rowIndex}
-            className='grid grid-cols-[repeat(20,_minmax(0,_1fr))] gap-1 transition-all '
-          >
+            className="grid grid-cols-[repeat(20,_minmax(0,_1fr))] gap-1 transition-all ">
             {/* {rowIndex} */}
             {row.map((cell: any, cellIndex: any) => (
               <div
@@ -254,40 +246,39 @@ function Board () {
                 } `}
                 onClick={() => {
                   removeAndShiftPieces(rowIndex, cellIndex)
-                }}
-              >
+                }}>
                 {/* {cell} */}
               </div>
             ))}
           </div>
         ))}
       </section>
-      {gameOver &&
-        (
-          <AlertDialog open={gameOver}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Game Over
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {gameWon ? "You've WON!" : "You've LOST!"}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              {gameWon && (
-                <Button variant={'default'} onClick={handleNextLevel}>
-                  Next Level
-                </Button>
-              )}
-              <Button variant={'default'} onClick={handleRestartGame}>
-                Restart Level
+      {gameOver && (
+        <AlertDialog open={gameOver}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Game Over</AlertDialogTitle>
+              <AlertDialogDescription>
+                {gameWon ? "You've WON!" : "You've LOST!"}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            {gameWon && (
+              <Button
+                variant={'default'}
+                onClick={handleNextLevel}>
+                Next Level
               </Button>
-              <Button variant={'default'}>Menu</Button>
-              <AlertDialogFooter>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
+            )}
+            <Button
+              variant={'default'}
+              onClick={handleRestartGame}>
+              Restart Level
+            </Button>
+            <Button variant={'default'}>Menu</Button>
+            <AlertDialogFooter></AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   )
 }
