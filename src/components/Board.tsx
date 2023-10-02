@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../index.css'
 import {
   AlertDialog,
@@ -54,15 +54,20 @@ function Board () {
   )
 
   const handleNextLevel = () => {
-    setNumberOfColors((prev) => prev++)
-    handleRestartGame()
+    setNumberOfColors((prevNumberOfColors) => {
+      const updatedNumberOfColors = prevNumberOfColors + 1
+      handleRestartGame(updatedNumberOfColors) // Pass the updated number of colors as an argument
+      return updatedNumberOfColors
+    })
   }
 
-  const handleRestartGame = () => {
+  const handleRestartGame = (newNumberOfColors: number) => {
+  // Accept the newNumberOfColors as a parameter
     setMatrix(
       Array.from({ length: NUM_ROWS }, () =>
-        Array.from({ length: NUM_COLS }, () =>
-          Math.floor(Math.random() * numberOfColors)
+        Array.from(
+          { length: NUM_COLS },
+          () => Math.floor(Math.random() * newNumberOfColors) // Use newNumberOfColors here
         )
       )
     )
@@ -271,7 +276,7 @@ function Board () {
             )}
             <Button
               variant={'default'}
-              onClick={handleRestartGame}>
+              onClick={() => { handleRestartGame(numberOfColors) }}>
               Restart Level
             </Button>
             <Button variant={'default'}>Menu</Button>
